@@ -1,5 +1,7 @@
 package com.rixyncs.fetchrecord;
+import java.sql.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -23,17 +25,22 @@ import com.rixyncs.bean.CreateMasterAccount;
 import com.rixyncs.parser.AccountDomParser;
 import com.rixyncs.parser.ContactDomParser;
 
+
 /*
  * Main class used to pull data from Zoho CRM and push in to postaplus oracle database using
  * postaplus soap webservice
  */
 
 public class DataPush {
+	
+	
 	/*
 	 * Method used to fetch all the account data from Zoho CRM based on the criteria
+
 	 * Send To ERP = true
 	 */
-			static String TodayDate=getTodaydate().toString();
+	
+		   static String TodayDate=getTodaydate().toString();
 			public static String getTodaydate()
 			{
 			DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
@@ -71,7 +78,7 @@ public class DataPush {
 		post.setParameter("selectColumns", selectColumns);
 		post.setParameter("fromIndex", fromIndex);
 		post.setParameter("toIndex", toIndex);
-		post.setParameter("criteria", criteria);
+		//post.setParameter("criteria", criteria);
 		//post.setParameter("criteria", criteria2);
 
 		
@@ -94,6 +101,19 @@ public class DataPush {
 
 			post.releaseConnection();
 		}
+	/*	try
+		{
+		    PrintStream myconsole=new PrintStream(new File("F://java.txt"));
+		    System.setOut(myconsole);
+		  //  System.out.println();
+		   // myconsole.print(val);
+		}
+			
+		
+		catch(FileNotFoundException fx)
+		{
+			System.out.print(fx);
+		}*/
 
 		return accountDetails;
 	}
@@ -252,9 +272,11 @@ public class DataPush {
 			DataPush sc = new DataPush();
 			String accountDetails = sc.getAccountDetails();
 			String contactDetails = sc.getContactDetails();
+			
+			
 
-			System.out.println("accountXml = " + accountDetails);
-			System.out.println("contact =" + contactDetails);
+		//	System.out.println("accountXml = " + accountDetails);
+			//System.out.println("contact =" + contactDetails);
 
 			//Getting account data
 			AccountDomParser accountDomParser = new AccountDomParser();
@@ -262,6 +284,11 @@ public class DataPush {
 			
 				
 			System.out.println("list of Account size = "+listOfAccount.size()); 
+			//database connection
+			
+			//data base end
+			
+			
 			//System.out.println("Account Name retrive  from Account===="+listOfAccount.get(0).getAccountName());
 				
 			//Getting contact data
@@ -280,12 +307,13 @@ public class DataPush {
 			userInfo.setPassword(prop.getProperty("Password"));
 			userInfo.setUserName(prop.getProperty("UserName"));
 			
-			System.out.println("Calling postaplus");
+			System.out.println("Calling Account records");
 			
 			
-			//calling Postplus
+			//calling Postaplus
 			
 			System.out.println("Size=================================="+listOfAccountInfo.size());
+
 			PostaClient postaClient = new PostaClient();
 			if(listOfAccountInfo.size()>0)
 			postaClient.createMasterAccount(userInfo, listOfAccountInfo.get(0));
@@ -306,6 +334,6 @@ public class DataPush {
 			e.printStackTrace();
 			
 		}
+		
 		}
-
-}
+	}

@@ -1,6 +1,15 @@
 package com.rixyncs.parser;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -79,10 +88,11 @@ public class AccountDomParser {
 		
 	}
 	
-	public ArrayList<Account> pasrse(String xmlString){
+	public ArrayList<Account> pasrse(String xmlString)
+	{
+
 		
-	
-		try {
+	try {
 
 			
 			
@@ -116,19 +126,26 @@ public class AccountDomParser {
 					
 					Element eElement = (Element) nNode;
 					
-					System.out.print("row : " + eElement.getAttribute("no"));
+					System.out.println("row : " + eElement.getAttribute("no"));
 				
 					
-					// List of element with name Element
+					// List of element with name Element 
 					NodeList flList = eElement.getElementsByTagName("FL");
-					for (int count = 0; count < flList.getLength(); count++) { //loop for FL element
+					
+					for (int count = 0; count < flList.getLength(); count++) 
+					{ //loop for FL element
 						
 						Node node1 = flList.item(count);
-						if (node1.getNodeType() == node1.ELEMENT_NODE) {
+						if (node1.getNodeType() == node1.ELEMENT_NODE) 
+						{
 							
 							Element fl = (Element) node1;
-							System.out.print("FL attribueName : " + fl.getAttribute("val") + "  AND  ");
-							System.out.println("FL Text : " + fl.getTextContent());
+						String a=fl.getAttribute("val");
+						String b=fl.getTextContent();
+						System.out.print(a);
+						System.out.println("      "+b);
+							//System.out.print("fl attribute " + fl.getAttribute("val") + " AND  ");
+							//System.out.println("fl text : " + fl.getTextContent());
 							
 							//setting AccountName
 							if(fl.getAttribute("val").equals("Account Name")){
@@ -138,7 +155,7 @@ public class AccountDomParser {
 							}
 							
 							//setting Landmark
-							if(fl.getAttribute("val").equals("Area details")){
+						if(fl.getAttribute("val").equals("Area details")){
 								if (!"null".equals(fl.getTextContent()) && !Strings.isNullOrEmpty(fl.getTextContent())) {
 									account.setLandmark(fl.getTextContent());
 								}
@@ -227,7 +244,7 @@ public class AccountDomParser {
 									account.setCustomerStatus(fl.getTextContent());
 								}
 							}
-							
+						
 							
 							//setting Billing Code
 							if(fl.getAttribute("val").equals("Billing Code")){
@@ -236,7 +253,7 @@ public class AccountDomParser {
 								}
 							}
 							
-							
+						
 							//setting Opening balance
 							if(fl.getAttribute("val").equals("Opening balance")){
 								if (!"null".equals(fl.getTextContent()) && !Strings.isNullOrEmpty(fl.getTextContent())) {
@@ -287,7 +304,15 @@ public class AccountDomParser {
 								}
 							}
 	
+							
+
+							
+							
+							
 						}//End IF
+						
+						
+						
 					}//End 2nd Loop
 				}
 				
@@ -295,7 +320,82 @@ public class AccountDomParser {
 				accountList.add(account);
 				
 				
-			}//End of Fist Loop
+				
+				
+			  //Database conection to input data to sqlplus     
+			
+
+				 
+		          ResultSet rs = null;
+		          PreparedStatement ps = null;
+		          Connection con=null;
+		        
+		           try {
+		        	  	
+		        	  	Class.forName("oracle.jdbc.driver.OracleDriver");
+		             
+		        	  	DriverManager.registerDriver( new oracle.jdbc.driver.OracleDriver());
+		        	  	 con = DriverManager.getConnection("jdbc:oracle:thin://localhost:1521/account1:myoracle","scott","tiger");
+		        	 //my new code
+		        	  	
+		        	  	
+		        	  	String sql="select * from account1 where accountid="+account.getAccountId();
+		        	  	Statement st = con.createStatement();
+		        	  	
+		        	  	  rs = st.executeQuery(sql);
+		        	  	if (!rs.next())
+		        	      {
+		        	  		
+		        	  		 String sql1="insert into account1 values(?,?,?,?,?) ";
+				        	  ps = con.prepareStatement(sql1);
+				        	  ps.setString(1, account.getAccountId());
+				        	  ps.setString(2, account.getAccountName());
+				        	  ps.setString(3, account.getPhone());
+				        	  ps.setString(4, account.getFax());
+				        	  ps.setString(5, account.getBillingCode());
+				    	      ps.execute();
+				    	      System.out.println("Inserted successfully");
+		        	      }
+		        	  	else
+		        	  	{
+		        	  		 String updateQuery = "update account1 set accountname=?, phone=?, fax=?,billingcode=? where accountid='"
+		        	                    + account.getAccountId() + "'";
+		        	  		 
+		        	  		PreparedStatement ps1 = con.prepareStatement(updateQuery);
+		                   // ps1.setString(1, account.getAccountId());
+		                    ps1.setString(1, account.getAccountName());
+		                    ps1.setString(2, account.getPhone());
+		                    ps1.setString(3, account.getFax());
+		                    ps1.setString(4, account.getBillingCode());
+		                    ps1.executeUpdate();    
+		                    System.out.println("updated successfully");
+
+		        	  	}
+		        	  	  
+		        	  
+		        	  	st.close();
+		        	    rs.close();
+		        	    con.close();
+		              }
+		           catch (Exception e)
+		          		{
+		        	   
+		        	   		e.printStackTrace();
+		        	   		throw e;
+		          		} 
+		         
+
+finally{ 
+		
+	   con.close();		
+}
+		   //database
+		          
+    	      
+			}	
+			
+			
+			//End of Fist Loop
 			
 			
 		} catch (Exception e) {
@@ -303,5 +403,7 @@ public class AccountDomParser {
 		}
 		
 		return accountList;
+
 	}
 }
+

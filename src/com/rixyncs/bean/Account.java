@@ -1,5 +1,8 @@
 package com.rixyncs.bean;
 /*Storing Account Field data of Zoho*/
+
+import java.util.ArrayList;
+
 public class Account {
 
 	String enTityCodeUpd;
@@ -23,6 +26,8 @@ public class Account {
 	String createdBy;
 	String modifiedBy;
 	String accountId;
+	
+	
 	
 	public String getAccountId() {
 		return accountId;
