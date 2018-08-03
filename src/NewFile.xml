@@ -1,4 +1,4 @@
-<response uri="/crm/private/xml/Accounts/searchRecords">
+<response uri="/crm/private/xml/Accounts/insertRecords">
 	<result>
 		<Accounts>
 			<row no="1">

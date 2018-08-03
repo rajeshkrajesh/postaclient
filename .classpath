@@ -19,12 +19,13 @@
 	<classpathentry kind="lib" path="lib/org.apache.commons.logging_1.0.4.v201101211617.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.logging.log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/qname.jar"/>
-	<classpathentry kind="lib" path="lib/xerces-2.2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/pavithra/Downloads/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pavithra/Desktop/abielnet project/customercsv11.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pavithra/Downloads/xerces-2.6.0.jar.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

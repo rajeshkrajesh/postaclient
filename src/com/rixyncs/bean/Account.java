@@ -15,7 +15,7 @@ public class Account {
 	String billingCode;
 	String billingState;
 	String paciNumber;
-	String phone;
+    String phone;
 	String fax;
 	String customerStatus;
 	String accountTypeCode;
